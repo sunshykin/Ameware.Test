@@ -18,7 +18,7 @@ namespace Ameware.Test
 			{
 				Id = item.Id,
 				Text = item.Text,
-				Childs = new List<Node>()
+				Childs = new ()
 			};
 		}
 
@@ -26,7 +26,7 @@ namespace Ameware.Test
 		{
 			if (tabsCount > 0)
 			{
-				builder.Append(String.Concat(Enumerable.Repeat("\t", tabsCount)));
+				builder.Append(String.Concat(Enumerable.Repeat(Constants.TabValue, tabsCount)));
 			}
 
 			builder.AppendLine(value);
@@ -41,8 +41,6 @@ namespace Ameware.Test
 		/// <returns></returns>
 		public static Node ToTree(this IEnumerable<Item> items)
 		{
-			// O(N^2)
-
 			// Creating a variable for Parent-Node
 			Node parent = null;
 
@@ -55,6 +53,7 @@ namespace Ameware.Test
 				dictionary.TryAdd(item.Id, item.ToNode());
 			}
 
+			// Iterating again to set each child into its parent node
 			foreach (var item in items)
 			{
 				if (item.Parent == -1)
@@ -90,13 +89,16 @@ namespace Ameware.Test
 
 				if (node.HasChilds)
 				{
+					// Opening the list
 					builder.AppendWithTabs("<ul>", tabLevel);
 
+					// Describing children
 					foreach (var child in node.Childs)
 					{
 						printNode(builder, child, tabLevel + 1);
 					}
 
+					// Closing the list
 					builder.AppendWithTabs("</ul>", tabLevel);
 				}
 
